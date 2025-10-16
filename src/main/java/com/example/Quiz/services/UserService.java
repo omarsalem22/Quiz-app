@@ -13,7 +13,6 @@ import com.example.Quiz.Dtos.UserDto;
 import com.example.Quiz.models.User;
 import com.example.Quiz.repository.UserRepository;
 
-import io.jsonwebtoken.security.Password;
 
 
 @Service
