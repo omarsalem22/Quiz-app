@@ -15,6 +15,8 @@ public class Quiz {
     @Column(length=30)
     private String title;
 
+    
+
     private String description;
     
     private boolean approved;

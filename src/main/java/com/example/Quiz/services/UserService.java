@@ -1,73 +1,68 @@
 package com.example.Quiz.services;
 
-import java.util.ArrayList;
-import java.util.Optional;
-
+import com.example.Quiz.Dtos.UserDto;
+import com.example.Quiz.models.User;
+import com.example.Quiz.repository.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.Quiz.Dtos.UserDto;
-import com.example.Quiz.models.Role;
-import com.example.Quiz.models.User;
-import com.example.Quiz.repository.RoleRepository;
-import com.example.Quiz.repository.UserRepository;
-
-import jakarta.transaction.Transactional;
+import java.util.Collections;
 
 @Service
 public class UserService implements UserDetailsService {
+
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.roleRepository = roleRepository;
     }
 
     public User registerUser(UserDto userDto) {
+        String email = userDto.getEmail().toLowerCase();
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("Email already exists" + userDto.getEmail() + " is "
+                    + userRepository.findByEmail(userDto.getEmail()));
+        }
+
+        if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
+        if (userDto.getRole() == null) {
+            throw new IllegalArgumentException("Role must be specified");
+        }
+
+        if (userDto.getRole() == User.Role.ADMIN) {
+            throw new IllegalArgumentException("Cannot assign ADMIN role during registration");
+        }
+
+        // Create and save user
         User user = new User();
         user.setUsername(userDto.getUsername());
+        user.setEmail(email);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setEmail(userDto.getEmail());
-        return userRepository.save(user);
+        user.setUsername(userDto.getUsername());
+        user.setRole(userDto.getRole());
 
+        return userRepository.save(user);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().name());
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                new ArrayList<>());
-
+                Collections.singletonList(authority));
     }
-
-    @Transactional
-    public void addRoleToUser(String username, String rolename) {
-        if (!rolename.equals("STUDENT") && !rolename.equals("ADMIN") && rolename.equals("INSTRUCTOR")) {
-            throw new IllegalArgumentException("Invalid role. Allowed roles: STUDENT, INSTRUCTOR, ADMIN");
-        }
-        User user = userRepository.findByUsername(username)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        Role role = roleRepository.findByName(rolename);
-        if (user == null) {
-            throw new RuntimeException("User not found: " + username);
-        }
-        if (role == null) {
-            throw new RuntimeException("Role not found: " + rolename);
-        }
-        user.addRole(role);
-        userRepository.save(user);
-    }
-
 }
