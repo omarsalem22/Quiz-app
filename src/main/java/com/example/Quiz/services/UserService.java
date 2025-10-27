@@ -65,4 +65,11 @@ public class UserService implements UserDetailsService {
                 user.getPassword(),
                 Collections.singletonList(authority));
     }
+
+    public User findById(Long id) {
+
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
+
+    }
 }
