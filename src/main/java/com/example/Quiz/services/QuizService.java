@@ -1,11 +1,13 @@
 package com.example.Quiz.services;
 
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.Quiz.models.Quiz;
 import com.example.Quiz.models.User;
 import com.example.Quiz.repository.QuizRepository;
-import com.example.Quiz.repository.UserRepository;
 
 @Service
 public class QuizService {
@@ -26,6 +28,14 @@ public class QuizService {
         quiz.setCreatedby(instructor);
         return quizRepository.save(quiz);
 
+    }
+
+    public List<Quiz> findQuizByInstructor(Long instructorID, Pageable pageable) {
+        return quizRepository.findByCreatedbyId(instructorID, pageable);
+    }
+
+    public List<Quiz> findApprovedQuizzes() {
+        return quizRepository.findByApproved(true);
     }
 
 }
