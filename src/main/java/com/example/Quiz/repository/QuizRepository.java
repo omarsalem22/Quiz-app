@@ -13,4 +13,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     List<Quiz> findByApproved(boolean approved );
 
+    // Quiz findById(Long id );
+
+
 }

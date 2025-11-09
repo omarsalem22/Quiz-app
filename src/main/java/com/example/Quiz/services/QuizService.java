@@ -37,5 +37,18 @@ public class QuizService {
     public List<Quiz> findApprovedQuizzes() {
         return quizRepository.findByApproved(true);
     }
+    public Quiz updateQuiz(Long quizId,Quiz quiz){
+        Quiz existing=quizRepository.findById(quizId).orElseThrow(()->new RuntimeException("Quiz not found"));
+        existing.setTitle(quiz.getTitle());
+        existing.setDescription(quiz.getDescription());
+        // existing.setApproved(quiz.isApproved());
+        return  quizRepository.save(existing);
+
+    }
+
+    public void deleteQuiz(Long quizId){
+        Quiz quiz=quizRepository.findById(quizId).orElseThrow(()-> new RuntimeException("Quiz not found"));
+        quizRepository.delete(quiz);
+    }
 
 }
