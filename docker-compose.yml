@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgresContainer:
+    image: postgres:15
+    container_name: postgresContainer
+    environment:
+      POSTGRES_DB: quiz
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456789
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quiz-network
+
+  app:
+    image: quiz-app:latest
+    container_name: quiz_app
+    depends_on:
+      postgresContainer:
+        condition: service_healthy
+    environment:
+      DB_USERNAME: postgres
+      DB_PASSWORD: 123456789
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/app/src
+      - ./pom.xml:/app/pom.xml
+    networks:
+      - quiz-network
+
+volumes:
+  postgres_data:
+
+networks:
+  quiz-network:
+    driver: bridge

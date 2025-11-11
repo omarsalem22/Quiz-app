@@ -12,22 +12,25 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
+
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne 
+    @ManyToOne
     @JoinColumn(name = "quiz_id")
-    private  Quiz quiz;
+    private Quiz quiz;
 
     private String text;
 
-    @OneToMany(mappedBy = "question",cascade=CascadeType.ALL,orphanRemoval=true)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Option> options = new ArrayList<>();
 
     private Integer correctOption;
