@@ -2,6 +2,7 @@ package com.example.Quiz.services;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.example.Quiz.models.Quiz;
 import com.example.Quiz.models.User;
 import com.example.Quiz.repository.QuizRepository;
+
 
 @Service
 public class QuizService {
@@ -19,6 +21,13 @@ public class QuizService {
         this.quizRepository = quizRepository;
         this.userService = userService;
     }
+
+    // private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
+
+    
+
+    @CacheEvict(value="quizzes",key="#root.methodName" )   
 
     public Quiz createQuiz(Quiz quiz, Long instructorID) {
 
@@ -34,6 +43,7 @@ public class QuizService {
     public List<Quiz> findQuizByInstructor(Long instructorID, Pageable pageable) {
         return quizRepository.findByCreatedbyId(instructorID, pageable);
     }
+
     @Cacheable(value="quizzes",key="#root.methodName" )   
     public List<Quiz> findApprovedQuizzes() {
         return quizRepository.findByApproved(true);
