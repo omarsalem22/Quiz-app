@@ -2,6 +2,7 @@ package com.example.Quiz.services;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +34,11 @@ public class QuizService {
     public List<Quiz> findQuizByInstructor(Long instructorID, Pageable pageable) {
         return quizRepository.findByCreatedbyId(instructorID, pageable);
     }
-
+    @Cacheable(value="quizzes",key="#root.methodName" )   
     public List<Quiz> findApprovedQuizzes() {
         return quizRepository.findByApproved(true);
+        // return quizRepository.findAll();
+
     }
     public Quiz updateQuiz(Long quizId,Quiz quiz){
         Quiz existing=quizRepository.findById(quizId).orElseThrow(()->new RuntimeException("Quiz not found"));

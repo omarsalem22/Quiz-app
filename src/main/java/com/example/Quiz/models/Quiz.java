@@ -28,7 +28,7 @@ public class Quiz {
 
     private String title;
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="created_by",nullable=false)
     private User createdby;
 
