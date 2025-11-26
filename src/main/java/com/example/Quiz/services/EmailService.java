@@ -22,10 +22,11 @@ public class EmailService {
         try {
             SimpleMailMessage message=new SimpleMailMessage();
             message.setFrom(this.sender);
-            message.setTo("ayaebrahimsa@gmail.com");
+            message.setTo(this.sender);
             message.setSubject(subject);
             message.setText(body);
             mailSender.send(message);
+            System.out.println("sent email to");
         } catch (Exception e) {
             // TODO: handle exception
         }
