@@ -1,8 +1,7 @@
 package com.example.Quiz.services;
 
-import com.example.Quiz.Dtos.UserDto;
-import com.example.Quiz.models.User;
-import com.example.Quiz.repository.UserRepository;
+import java.util.Collections;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,13 +9,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import com.example.Quiz.Dtos.UserDto;
+import com.example.Quiz.Dtos.UserResponseDto;
+import com.example.Quiz.models.User;
+import com.example.Quiz.repository.UserRepository;
 
 @Service
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -66,10 +69,18 @@ public class UserService implements UserDetailsService {
                 Collections.singletonList(authority));
     }
 
-    public User findById(Long id) {
+    public UserResponseDto findUserById(Long id) {
 
-        return userRepository.findById(id)
+        User user= userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
+              return new UserResponseDto(user);  
+
+    }
+        public User findUserEntityById(Long id) {
+
+        User user= userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
+                return user;
 
     }
 }

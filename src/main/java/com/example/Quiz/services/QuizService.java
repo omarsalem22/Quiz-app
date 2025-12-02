@@ -3,6 +3,7 @@ package com.example.Quiz.services;
 import java.util.List;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,12 +27,12 @@ public class QuizService {
     // private static final Logger logger =
     // LoggerFactory.getLogger(UserService.class);
 
-    @CacheEvict(value="quizzes",key="#root.methodName" )   
+    @CachePut(value="quizzes",key="#root.methodName" )   
 
 
     public Quiz createQuiz(Quiz quiz, Long instructorID) {
 
-        User instructor = userService.findById(instructorID);
+        User instructor = userService.findUserEntityById(instructorID);
         if (instructor == null || !instructor.getRole().equals(User.Role.INSTRUCTOR)) {
             throw new IllegalArgumentException("Invalid instructor");
         }
