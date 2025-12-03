@@ -1,5 +1,7 @@
 package com.example.Quiz.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,6 +23,7 @@ public class Option {
 
     @ManyToOne
     @JoinColumn(name = "question_id")
+     @JsonIgnore
     private Question question;
     private String text;
 
