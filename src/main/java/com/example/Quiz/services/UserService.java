@@ -19,7 +19,6 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -71,16 +70,22 @@ public class UserService implements UserDetailsService {
 
     public UserResponseDto findUserById(Long id) {
 
-        User user= userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-              return new UserResponseDto(user);  
+        return new UserResponseDto(user);
 
     }
-        public User findUserEntityById(Long id) {
 
-        User user= userRepository.findById(id)
+    public User findUserEntityByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with username: " + username));
+    }
+
+    public User findUserEntityById(Long id) {
+
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
-                return user;
+        return user;
 
     }
 }

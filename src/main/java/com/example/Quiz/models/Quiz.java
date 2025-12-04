@@ -2,6 +2,8 @@ package com.example.Quiz.models;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,6 +34,7 @@ public class Quiz  implements Serializable{
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="created_by",nullable=false)
+     @JsonIgnore
     private User createdby;
 
     
